@@ -10,6 +10,10 @@ const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 
 
+app.get("/",(req,res)=>{
+    res.send("hello nodejs")
+})
+
 // login form start
 app.post("/postdata",async(req,res)=>{
     const mydata = new Schema();
