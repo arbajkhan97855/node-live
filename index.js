@@ -10,12 +10,10 @@ const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 
 
-app.get("/",(req,res)=>{
-    res.send("hello nodejs")
-})
+
 
 // login form start
-app.post("/postdata",async(req,res)=>{
+app.post("/user",async(req,res)=>{
     const mydata = new Schema();
     mydata.username = req.body.username;
     mydata.password = req.body.password;
@@ -33,16 +31,16 @@ app.post("/postdata",async(req,res)=>{
     }
 })
 
-app.get("/postdata",async(req,res)=>{
+app.get("/user",async(req,res)=>{
     const datta = await Schema.find();
     res.send({"login":datta})
 })
-app.get("/postdata/:id",async(req,res)=>{
+app.get("/user/:id",async(req,res)=>{
     const datta = await Schema.findOne({"_id" : req.params.id});
     res.send(datta)
 })
 
-app.patch("/postdata/:id", async (req, res) => {
+app.patch("/user/:id", async (req, res) => {
     const datta = await Schema.findByIdAndUpdate(req.params.id, req.body);
     const updatedata = res.send({"login" : datta});
     if(updatedata){
@@ -76,6 +74,21 @@ app.post("/booking",async(req,res)=>{
 app.get("/booking", async(req,res)=>{
     const data = await Booking.find();
     res.send({"userdetaile" : data})
+})
+
+app.get("/booking/:id",async(req,res)=>{
+    const datta = await Booking.findOne({"_id" : req.params.id});
+    res.send(datta)
+})
+
+app.patch("/booking/:id", async (req, res) => {
+    const datta = await Booking.findByIdAndUpdate(req.params.id, req.body);
+    const updatedata = res.send({"userdetaile" : datta});
+    if(updatedata){
+        res.status(200).json({
+            message : "succefull data edit"
+        })
+    }
 })
 app.listen(port,(req,res)=>{
     console.log("connect with server",port)
