@@ -13,6 +13,16 @@ app.use(bodyparser.json())
 
 
 // login form start
+app.get("/user",async(req,res)=>{
+    const datta = await Schema.find();
+    res.send({"login":datta})
+})
+app.get("/user/:id",async(req,res)=>{
+    const datta = await Schema.findOne({"_id" : req.params.id});
+    res.send(datta)
+})
+
+
 app.post("/user",async(req,res)=>{
     const mydata = new Schema();
     mydata.username = req.body.username;
@@ -31,14 +41,6 @@ app.post("/user",async(req,res)=>{
     }
 })
 
-app.get("/user",async(req,res)=>{
-    const datta = await Schema.find();
-    res.send({"login":datta})
-})
-app.get("/user/:id",async(req,res)=>{
-    const datta = await Schema.findOne({"_id" : req.params.id});
-    res.send(datta)
-})
 
 app.patch("/user/:id", async (req, res) => {
     const datta = await Schema.findByIdAndUpdate(req.params.id, req.body);
@@ -47,14 +49,36 @@ app.patch("/user/:id", async (req, res) => {
         res.status(200).json({
             message : "succefull data edit"
         })
+    }else{
+        res.status(404).json({ message: "User not edit" });
     }
 })
 
+app.delete("/user/:id", async(req, res) =>{
+    const datta = await Schema.findByIdAndDelete(req.params.id)
+    if(datta){
+        res.status(200).json({
+            message : "succefully delete"
+        })
+    }else{
+        res.status(404).json({ message: "User not delete" });
+    }
+})
 // app.post("/postdata", (req, res) => {
 //     // Save to database, then:
 //     res.status(200).json({ message: "User created successfully" });
 // });
 // login form end
+
+app.get("/booking", async(req,res)=>{
+    const data = await Booking.find();
+    res.send({"userdetaile" : data})
+})
+
+app.get("/booking/:id",async(req,res)=>{
+    const datta = await Booking.findOne({"_id" : req.params.id});
+    res.send(datta)
+})
 
 app.post("/booking",async(req,res)=>{
     const bkdata = new Booking();
@@ -67,19 +91,11 @@ app.post("/booking",async(req,res)=>{
     if(datavalue){
         console.log(`successfull post data for ${bkdata.username}`)
     }else{
-        console.log("cannot successfull post data")
+        res.status(404).json({ message: "User not post" });
     }
 })
 
-app.get("/booking", async(req,res)=>{
-    const data = await Booking.find();
-    res.send({"userdetaile" : data})
-})
 
-app.get("/booking/:id",async(req,res)=>{
-    const datta = await Booking.findOne({"_id" : req.params.id});
-    res.send(datta)
-})
 
 app.patch("/booking/:id", async (req, res) => {
     const datta = await Booking.findByIdAndUpdate(req.params.id, req.body);
@@ -88,6 +104,19 @@ app.patch("/booking/:id", async (req, res) => {
         res.status(200).json({
             message : "succefull data edit"
         })
+    }else{
+        res.status(404).json({ message: "User not edit" });
+    }
+})
+
+app.delete("/booking/:id", async(req, res) =>{
+    const datta = await Schema.findByIdAndDelete(req.params.id)
+    if(datta){
+        res.status(200).json({
+            message : "succefully delete"
+        })
+    }else{
+        res.status(404).json({ message: "User not delete" });
     }
 })
 app.listen(port,(req,res)=>{
