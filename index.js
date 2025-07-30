@@ -27,10 +27,10 @@ const storage = multer.diskStorage({
 
 
 const fileFilter = (req,file,cb)=>{
-    if(file.mimetype.startWith('image/')){
+  if(file.mimetype.startsWith('image/')){
         cb(null,true)
     }else{
-        cb(new Error("only image are allowed", false))
+        cb(new Error("only image are allowed"))
     }
 }
 const upload = multer({
@@ -61,15 +61,7 @@ app.get("/user/:id", async (req, res) => {
 
 })
 
-app.get("/user/:id", async (req, res) => {
-    try {
-        const datta = await Schema.findOne({ "_id": req.params.id });
-        res.json(datta)
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
 
-})
 
 app.post("/user", upload.single('profileimg'),async (req, res) => {
     try {
@@ -98,14 +90,12 @@ app.post("/user", upload.single('profileimg'),async (req, res) => {
 app.patch("/user/:id", async (req, res) => {
     try {
         const datta = await Schema.findByIdAndUpdate(req.params.id, req.body);
-        const updatedata = res.json({ "login": datta });
-        if (updatedata) {
-            res.status(200).json({
-                message: "succefull data edit"
-            })
-        } else {
-            res.status(404).json({ message: "User not edit" });
-        }
+        if (datta) {
+          res.status(200).json({ message: "successfully updated", login: datta });
+         } else {
+        res.status(404).json({ message: "User not edit" });
+         }
+
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -116,9 +106,7 @@ app.delete("/user/:id", async (req, res) => {
     try {
         const datta = await Schema.findByIdAndDelete(req.params.id)
         if (datta) {
-            res.status(200).json({
-                message: "succefully delete"
-            })
+            res.status(200).json({message: "succefully delete"})
         } else {
             res.status(404).json({ message: "User not delete" });
         }
@@ -173,15 +161,14 @@ app.post("/booking", async (req, res) => {
 
 app.patch("/booking/:id", async (req, res) => {
     try {
-        const datta = await Booking.findByIdAndUpdate(req.params.id, req.body);
-        const updatedata = res.json({ "userdetaile": datta });
-        if (updatedata) {
-            res.status(200).json({
-                message: "succefull data edit"
-            })
-        } else {
-            res.status(404).json({ message: "User not edit" });
-        }
+        const datta = await Booking.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+if (datta) {
+    res.status(200).json({ message: "Successfully updated", "userdetaile": datta });
+} else {
+    res.status(404).json({ message: "Booking not found" });
+}
+
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -190,7 +177,7 @@ app.patch("/booking/:id", async (req, res) => {
 
 app.delete("/booking/:id", async (req, res) => {
     try {
-        const datta = await Schema.findByIdAndDelete(req.params.id)
+       const datta = await Booking.findByIdAndDelete(req.params.id)
         if (datta) {
             res.status(200).json({
                 message: "succefully delete"
