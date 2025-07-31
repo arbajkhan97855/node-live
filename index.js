@@ -6,6 +6,7 @@ const Booking = require("./Schema/bookingschema")
 const cors = require("cors")
 const multer = require("multer")
 const path = require("path")
+app.use('/uploads', express.static('uploads'));
 const port = 5000;
 app.use(cors({ origin: '*' }))
 const bodyparser = require("body-parser")
@@ -47,7 +48,7 @@ app.get("/user", async (req, res) => {
         const datta = await Schema.find();
         res.json(datta)
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -56,7 +57,7 @@ app.get("/user/:id", async (req, res) => {
         const datta = await Schema.findOne({ "_id": req.params.id });
         res.json(datta)
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -76,12 +77,12 @@ app.post("/user", upload.single('profileimg'),async (req, res) => {
         }
         const datavalue = await mydata.save()
         if (datavalue) {
-            res.status(200).json({ message: "User created successfully" });//jab backend se msg dena ho/ya alert me dikhana ho post hone pr 
+            res.status(200).send("User created successfully" );//jab backend se msg dena ho/ya alert me dikhana ho post hone pr 
         } else {
-            res.status(400).json({ message: "User created not successfully" })
+            res.status(400).send("User created not successfully")
         }
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -90,14 +91,15 @@ app.post("/user", upload.single('profileimg'),async (req, res) => {
 app.patch("/user/:id", async (req, res) => {
     try {
         const datta = await Schema.findByIdAndUpdate(req.params.id, req.body);
+        const updata = res.json({login: datta})
         if (datta) {
-          res.status(200).json({ message: "successfully updated", login: datta });
+          res.status(200).send("successfully updated",);
          } else {
-        res.status(404).json({ message: "User not edit" });
+        res.status(404).send("User not edit");
          }
 
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -106,12 +108,12 @@ app.delete("/user/:id", async (req, res) => {
     try {
         const datta = await Schema.findByIdAndDelete(req.params.id)
         if (datta) {
-            res.status(200).json({message: "succefully delete"})
+            res.status(200).send("succefully delete")
         } else {
-            res.status(404).json({ message: "User not delete" });
+            res.status(404).send("User not delete");
         }
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -122,7 +124,7 @@ app.get("/booking", async (req, res) => {
         const data = await Booking.find();
         res.json({ "userdetaile": data })
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -132,7 +134,7 @@ app.get("/booking/:id", async (req, res) => {
         const datta = await Booking.findOne({ "_id": req.params.id });
         res.json(datta)
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message )
     }
 
 })
@@ -147,12 +149,12 @@ app.post("/booking", async (req, res) => {
         bkdata.msg = req.body.msg;
         const datavalue = await bkdata.save()
         if (datavalue) {
-            res.status(200).json({ message: "User created successfully" });
+            res.status(200).send("User created successfully");
         } else {
-            res.status(404).json({ message: "User not post" });
+            res.status(404).send("User not post");
         }
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -162,15 +164,15 @@ app.post("/booking", async (req, res) => {
 app.patch("/booking/:id", async (req, res) => {
     try {
         const datta = await Booking.findByIdAndUpdate(req.params.id, req.body, { new: true });
-
-if (datta) {
-    res.status(200).json({ message: "Successfully updated", "userdetaile": datta });
+        const updata = res.json({"userdetaile": datta})
+if (updata) {
+    res.status(200).send("Successfully updated");
 } else {
-    res.status(404).json({ message: "Booking not found" });
+    res.status(404).send("Booking not found");
 }
 
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
@@ -179,14 +181,14 @@ app.delete("/booking/:id", async (req, res) => {
     try {
        const datta = await Booking.findByIdAndDelete(req.params.id)
         if (datta) {
-            res.status(200).json({
-                message: "succefully delete"
-            })
+            res.status(200).send(
+            "succefully delete"
+            )
         } else {
-            res.status(404).json({ message: "User not delete" });
+            res.status(404).send("User not delete");
         }
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).send(error.message)
     }
 
 })
