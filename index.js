@@ -7,7 +7,7 @@ const cors = require("cors")
 const multer = require("multer")
 const path = require("path")
 const port = 5000;
-app.use(cors(origin = "*"))
+app.use(cors({ origin: '*' }))
 const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 
