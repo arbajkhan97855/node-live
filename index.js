@@ -1,49 +1,51 @@
 const express = require("express");
 const app = express();
-const Schema = require("./Schema/createschema")
-const connectdata = require("./Schema/connectdatabse")
-const Booking = require("./Schema/bookingschema")
-const cors = require("cors")
-const multer = require("multer")
-const path = require("path")
-const fs = require("fs")
+const Schema = require("./Schema/createschema");
+const connectdata = require("./Schema/connectdatabse");
+const Booking = require("./Schema/bookingschema");
+const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const bodyparser = require("body-parser");
 const port = 5000;
-app.use(cors({ origin: '*' }))
-const bodyparser = require("body-parser")
-app.use('/booking', bodyparser.json());
-app.use('/uploads', express.static('uploads'));
 
-// image upload
+// Create uploads folder if it doesn't exist
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
 
+// Middleware
+app.use(cors({ origin: '*' }));
+app.use(bodyparser.json());
+app.use('/uploads', express.static('uploads'));
+
+// Multer Setup
 const storage = multer.diskStorage({
-    destination : (req,file,cb)=>{
-       cb(null, path.join(__dirname, "uploads"))
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
     },
-    filename:(req,file,cb)=>{
-        const newFileName = Date.now() + path.extname(file.originalname)
-        cb(null,newFileName)
+    filename: function (req, file, cb) {
+        const uniqueName = Date.now() + path.extname(file.originalname);
+        cb(null, uniqueName);
     }
-})
+});
 
-
-const fileFilter = (req,file,cb)=>{
-  if(file.mimetype.startsWith('image/')){
-        cb(null,true)
-    }else{
-        cb(new Error("only image are allowed"))
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only image files are allowed"), false);
     }
-}
+};
 const upload = multer({
-    storage : storage,
+    storage: storage,
     fileFilter: fileFilter,
-    limits : {
-        fileSize: 1024 * 1024 * 6
-    }
-})
+    limits: {
+        fileSize: 1024 * 1024 * 6, // 6MB
+    },
+});
 
 // login form start
 app.get("/user", async (req, res) => {
@@ -67,23 +69,24 @@ app.get("/user/:id", async (req, res) => {
 
 
 
-app.post("/user", upload.single('profileimg'),async (req, res) => {
+app.post("/user", upload.single('profileimg'), async (req, res) => {
     try {
-        const mydata = new Schema(req.body);
-        if(req.file){
-         mydata.profileimg = req.file.filename;
+        const newUser = new Schema(req.body);
+        if (req.file) {
+            newUser.profileimg = req.file.filename;
         }
-        const datavalue = await mydata.save()
-        if (datavalue) {
-            res.status(200).json({ message: "User created successfully" });//jab backend se msg dena ho/ya alert me dikhana ho post hone pr 
+
+        const savedUser = await newUser.save();
+        if (savedUser) {
+            res.status(200).json({ message: "User created successfully" });
         } else {
-            res.status(400).json({ message: "User created not successfully" })
+            res.status(400).json({ message: "Failed to create user" });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        console.error("Error in /user POST:", error.message);
+        res.status(500).json({ message: error.message });
     }
-
-})
+});
 
 
 app.patch("/user/:id",upload.single('profileimg'), async (req, res) => {
