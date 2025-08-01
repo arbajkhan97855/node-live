@@ -11,7 +11,6 @@ const port = 5000;
 app.use(cors({ origin: '*' }))
 const bodyparser = require("body-parser")
 app.use('/booking', bodyparser.json());
-
 app.use('/uploads', express.static('uploads'));
 
 // image upload
@@ -87,7 +86,7 @@ app.post("/user", upload.single('profileimg'),async (req, res) => {
 })
 
 
-app.patch("/user/:id", async (req, res) => {
+app.patch("/user/:id",upload.single('profileimg'), async (req, res) => {
     try {
         const existinguser = await Schema.findById(req.params.id)
         if(req.file){
