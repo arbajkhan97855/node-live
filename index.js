@@ -138,7 +138,7 @@ app.delete("/user/:id", async (req, res) => {
 app.get("/booking", async (req, res) => {
     try {
         const data = await Booking.find();
-        res.json({ "userdetaile": data })
+        res.json(data)
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -177,7 +177,7 @@ app.patch("/booking/:id", async (req, res) => {
         const datta = await Booking.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
 if (datta) {
-    res.status(200).json({ message: "Successfully updated", "userdetaile": datta });
+    res.status(200).json({ message: "Successfully updated", datta });
 } else {
     res.status(404).json({ message: "Booking not found" });
 }
