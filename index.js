@@ -65,12 +65,7 @@ app.get("/user/:id", async (req, res) => {
 
 app.post("/user", upload.single('profileimg'),async (req, res) => {
     try {
-        const mydata = new Schema();
-        mydata.username = req.body.username;
-        mydata.password = req.body.password;
-        mydata.mobile = req.body.mobile;
-        mydata.useremail = req.body.useremail;   
-        mydata.DOB = req.body.DOB
+        const mydata = new Schema(req.body);
         if(req.file){
          mydata.profileimg = req.file.filename;
         }
@@ -139,12 +134,7 @@ app.get("/booking/:id", async (req, res) => {
 
 app.post("/booking", async (req, res) => {
     try {
-        const bkdata = new Booking();
-        bkdata.username = req.body.username;
-        bkdata.email = req.body.email;
-        bkdata.time = req.body.time;
-        bkdata.number = req.body.number;
-        bkdata.msg = req.body.msg;
+        const bkdata = new Booking(req.body);
         const datavalue = await bkdata.save()
         if (datavalue) {
             res.status(200).json({ message: "User created successfully" });
