@@ -12,6 +12,7 @@ app.use(cors({ origin: '*' }))
 const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 
+app.use('/uploads', express.static('uploads'));
 
 // image upload
 
