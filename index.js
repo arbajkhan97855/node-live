@@ -94,7 +94,7 @@ app.patch("/user/:id",upload.single('profileimg'), async (req, res) => {
         const existinguser = await Schema.findById(req.params.id)
         if(req.file){
             if(existinguser.profileimg){
-                const oldfilepath = path.join('./uploads', datta.profileimg)
+                const oldfilepath = path.join('./uploads', existinguser.profileimg)
                 fs.unlink(oldfilepath,(err)=>{
                     if(err) console.log('failed to delete old image :', err)
                 })
