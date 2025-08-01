@@ -10,12 +10,15 @@ const fs = require("fs")
 const port = 5000;
 app.use(cors({ origin: '*' }))
 const bodyparser = require("body-parser")
-app.use(bodyparser.json())
+app.use('/booking', bodyparser.json());
 
 app.use('/uploads', express.static('uploads'));
 
 // image upload
-
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 
 const storage = multer.diskStorage({
     destination : (req,file,cb)=>{
