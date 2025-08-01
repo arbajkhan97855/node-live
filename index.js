@@ -6,6 +6,7 @@ const Booking = require("./Schema/bookingschema")
 const cors = require("cors")
 const multer = require("multer")
 const path = require("path")
+const fs = require("fs")
 const port = 5000;
 app.use(cors({ origin: '*' }))
 const bodyparser = require("body-parser")
@@ -84,7 +85,17 @@ app.post("/user", upload.single('profileimg'),async (req, res) => {
 
 app.patch("/user/:id", async (req, res) => {
     try {
-        const datta = await Schema.findByIdAndUpdate(req.params.id, req.body);
+        const existinguser = await Schema.findById(req.params.id)
+        if(req.file){
+            if(existinguser.profileimg){
+                const oldfilepath = path.join('./uploads', datta.profileimg)
+                fs.unlink(oldfilepath,(err)=>{
+                    if(err) console.log('failed to delete old image :', err)
+                })
+            }
+            req.body.profileimg = req.file.filename
+        }
+        const datta = await Schema.findByIdAndUpdate(req.params.id, req.body,{new:true});
         if (datta) {
           res.status(200).json({ message: "successfully updated", login: datta });
          } else {
@@ -101,6 +112,12 @@ app.delete("/user/:id", async (req, res) => {
     try {
         const datta = await Schema.findByIdAndDelete(req.params.id)
         if (datta) {
+            if(datta.profileimg){
+                const filepath = path.join('./uploads', datta.profileimg)
+                fs.unlink(filepath,(err)=>{
+                    if(err) console.log('failed to delete :', err)
+                })
+            }
             res.status(200).json({message: "succefully delete"})
         } else {
             res.status(404).json({ message: "User not delete" });
