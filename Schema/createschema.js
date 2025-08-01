@@ -5,8 +5,7 @@ const Schemas = new mongoose.Schema({
     password : String,
     mobile : Number,
     useremail : String,
-    profileimg : String,
-    DOB : Date
+    profileimg : String
 })
 
 const modelschema = mongoose.model("restorant-data",Schemas)
